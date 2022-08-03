@@ -17,13 +17,15 @@ contract LevelNFT is ERC721Royalty {
     uint256 private salePrice;
     uint256 private nftCount;
     uint256 private salesStartBlock;
-    uint256 private salesEndBlock;
+    uint256 private salesEndBlock;    
+    uint256 private totalWhiteListAddress;
     bool private isTokenSale;
     address private salesTokenAddress;
     address private factory;
 
     mapping (uint256 => string) public nftNames;
     mapping (uint256 => uint256) public nftLevels;
+    mapping (address => bool) public isWhiteList;
 
     mapping (uint256 => mapping( string => bool)) public utilities;
 
@@ -150,5 +152,26 @@ contract LevelNFT is ERC721Royalty {
         if( contractBalance > 0 ) {
             salesToken.transfer(msg.sender, contractBalance);
         }
+    }
+
+
+    function addWLAddress(address[] memory WL) public onlyFactory{
+        for(uint i =0;i<WL.length;i++)
+        {
+            isWhiteList[WL[i]]=true;
+            totalWhiteListAddress++;
+        }
+    }
+
+    function removeWLAddress(address[] memory WL) public onlyFactory{
+        for(uint i=0;i<WL.length;i++)
+        {
+            isWhiteList[WL[i]]=false;
+            totalWhiteListAddress--;
+        }
+    }
+
+    function verifyWLAddress(address WL) public view onlyFactory returns (bool){
+        return isWhiteList[WL];
     }
 }
